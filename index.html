@@ -7,7 +7,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* Tetapan Mutlak Tanpa Scroll & Penuh Skrin */
         html, body {
             margin: 0;
             padding: 0;
@@ -20,7 +19,6 @@
             -webkit-user-select: none;
         }
 
-        /* Paksa Mod Portrait */
         @media screen and (orientation: landscape) {
             #orientation-warning {
                 display: flex !important;
@@ -33,7 +31,7 @@
             100% { top: 100%; opacity: 0.8; }
         }
         .animate-scan {
-            animation: scanline 2s linear infinite;
+            animation: scanline 1.5s linear infinite;
         }
 
         @keyframes pulse-gold {
@@ -41,7 +39,7 @@
             50% { filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.9)); }
         }
         .glow-gold-red {
-            animation: pulse-gold 2.5s infinite;
+            animation: pulse-gold 2s infinite;
         }
     </style>
 </head>
@@ -55,13 +53,23 @@
         Sila pusingkan iPad kepada mod menegak (Portrait) untuk paparan rasmi majlis.
     </div>
 
-    <!-- KAMERA LATAR BELAKANG -->
-    <video id="webcam" autoplay playsinline class="absolute inset-0 w-full h-full object-cover -z-10 opacity-30 transform scale-x-[-1]"></video>
+    <!-- KAMERA UTAMA LATAR BELAKANG (DIOPTIMUMKAN SUPAYA TAK LAG) -->
+    <video id="webcam" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover -z-10 opacity-35 transform scale-x-[-1]"></video>
     
-    <!-- GRID TEKNOLOGI OVERLAY (EMAS & MERAH) -->
+    <!-- GRID TEKNOLOGI OVERLAY -->
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#eab30810_1px,transparent_1px),linear-gradient(to_bottom,#ef444410_1px,transparent_1px)] bg-[size:35px_35px] -z-10 pointer-events-none"></div>
 
-    <!-- BUTANG FULLSCREEN / KUNCI SKRIN -->
+    <!-- MINI PREVIEW KAMERA DI ATAS SEBELAH KIRI (MENUNJUKKAN TANGAN YANG MENYENTUH) -->
+    <div class="absolute top-3 left-3 z-30 w-24 h-32 md:w-28 md:h-36 rounded-xl border-2 border-amber-500/80 bg-black/80 overflow-hidden shadow-[0_0_20px_rgba(234,179,8,0.4)] flex flex-col items-center justify-center backdrop-blur-md">
+        <video id="webcam-mini" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover opacity-90 transform scale-x-[-1]"></video>
+        <!-- Garisan imbasan mini dalam kotak kecil -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_bottom,#00ffff10_1px,transparent_1px)] bg-[size:10px_10px] pointer-events-none"></div>
+        <div class="absolute bottom-1 bg-black/70 px-2 py-0.5 rounded text-[9px] font-mono text-amber-300 border border-amber-500/40 tracking-wider">
+            LIVE SCAN
+        </div>
+    </div>
+
+    <!-- BUTANG FULLSCREEN / KUNCI SKRIN DI ATAS KANAN -->
     <button id="fullscreen-btn" onclick="toggleFullScreen()" class="absolute top-3 right-3 z-30 bg-black/80 border border-amber-500/60 hover:bg-amber-950/40 text-amber-400 px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.3)] transition flex items-center gap-2 backdrop-blur-md cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
@@ -69,7 +77,7 @@
         <span id="fs-text" class="text-[11px] font-bold uppercase tracking-wider">Fullscreen</span>
     </button>
 
-    <!-- HEADER / NAMA MAJLIS RASMI (TEMA EMAS & MERAH) -->
+    <!-- HEADER / NAMA MAJLIS RASMI -->
     <div class="z-10 text-center mt-2 max-w-4xl px-2">
         <div class="inline-block px-3 py-0.5 rounded-full bg-gradient-to-r from-red-600/30 via-amber-500/20 to-red-600/30 border border-amber-500/40 mb-1">
             <span class="text-[10px] md:text-xs font-bold tracking-widest text-amber-400 uppercase">
@@ -80,14 +88,14 @@
             PERASMIAN MAJLIS ANUGERAH BAKAT DAN KEPIMPINAN MRSM GERIK 2026
         </h1>
         <p class="text-[11px] md:text-xs text-gray-300 tracking-wider mt-1">
-            Letakkan <strong class="text-amber-400">TAPAK TANGAN</strong> pada zon pengimbas selama <strong class="text-red-400">4 Saat</strong>
+            Letakkan <strong class="text-amber-400">TAPAK TANGAN</strong> pada zon pengimbas selama <strong class="text-red-400">3 Saat</strong>
         </p>
     </div>
 
-    <!-- KAWASAN UTAMA: PENGIMBAS TAPAK TANGAN PREMIUM (GOLD/RED/BLACK) -->
+    <!-- KAWASAN UTAMA: PENGIMBAS TAPAK TANGAN PREMIUM -->
     <div id="scanner-area" class="z-10 relative w-64 h-72 md:w-76 md:h-88 rounded-3xl border-2 border-amber-500/50 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(234,179,8,0.25)] transition-all duration-300 cursor-pointer bg-gradient-to-b from-neutral-950/80 to-zinc-900/80 backdrop-blur-md my-auto overflow-hidden">
         
-        <!-- Garisan Laser Bergerak Menurun (Merah Menyala) -->
+        <!-- Garisan Laser Bergerak Menurun -->
         <div class="absolute w-full h-1 bg-red-500 shadow-[0_0_20px_#ef4444] animate-scan pointer-events-none z-20"></div>
 
         <!-- Grafik Tapak Tangan Teknologi -->
@@ -102,7 +110,7 @@
             </p>
         </div>
 
-        <!-- Amaran jika sentuhan dialih/terlepas sebelum 4 saat -->
+        <!-- Amaran jika sentuhan terangkat sebelum 3 saat -->
         <div id="warning-msg" class="absolute bottom-3 text-[11px] text-red-400 font-bold tracking-wide hidden animate-pulse z-20 bg-black/80 px-3 py-1 rounded border border-red-500/40">
             ⚠️ Sentuhan terlepas! Masa diset semula ke 0s.
         </div>
@@ -114,7 +122,7 @@
         <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-400 pointer-events-none"></div>
     </div>
 
-    <!-- PAPARAN KEJAYAAN (ACCESS GRANTED - EKSKLUSIF GOLD/RED) -->
+    <!-- PAPARAN KEJAYAAN (ACCESS GRANTED) -->
     <div id="success-screen" class="hidden absolute inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-6 text-center animate-fade-in">
         <div class="w-28 h-28 bg-amber-500/10 rounded-full border-4 border-amber-400 flex items-center justify-center mb-6 shadow-[0_0_80px_rgba(234,179,8,0.6)]">
             <svg class="w-16 h-16 text-amber-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,12 +145,13 @@
 
     <!-- FOOTER STATUS -->
     <div class="z-10 text-[10px] text-amber-500/70 font-mono tracking-widest text-center mb-1">
-        MRSM GERIK 2026 // SECURE BIOMETRIC SYSTEM v3.0
+        MRSM GERIK 2026 // SECURE BIOMETRIC SYSTEM v3.1
     </div>
 
     <!-- SKRIP LOGIK JAVASCRIPT -->
     <script>
         const video = document.getElementById('webcam');
+        const videoMini = document.getElementById('webcam-mini');
         const scannerArea = document.getElementById('scanner-area');
         const timerDisplay = document.getElementById('timer-display');
         const palmIcon = document.getElementById('palm-icon');
@@ -151,11 +160,13 @@
         const fsText = document.getElementById('fs-text');
         
         let holdTimer = null;
-        const totalDuration = 4000; // Tetapan tepat 4 Saat
+        let scanAudioInterval = null;
+        const totalDuration = 3000; // Tetapan tepat 3 Saat
         const intervalTime = 50;
         let elapsed = 0;
         let isFullscreenActive = false;
         let isHolding = false;
+        let audioCtx = null;
 
         // 1. Fungsi Fullscreen Sepenuh Skrin Kunci
         function toggleFullScreen() {
@@ -188,21 +199,46 @@
             }
         }
 
-        // 2. Buka Kamera Depan iPad
+        // 2. Buka Kamera Depan (Dioptimumkan resolusi rendah supaya tak lag)
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user" }, 
+                    video: { 
+                        facingMode: "user",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }, 
                     audio: false 
                 });
                 video.srcObject = stream;
+                videoMini.srcObject = stream; // Sambung ke preview kecil di penjuru atas kiri
             } catch (err) {
                 console.log("Kamera tidak diakses: ", err);
             }
         }
         startCamera();
 
-        // 3. Logik Mula Sentuh (4 Saat & Reset Auto Jika Terlepas)
+        // Fungsi Audio Bunyi Laser Scan Semasa Menunggu (Bip Berdetik)
+        function playScanBeep() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime); // Frekuensi laser tinggi
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {
+                // Ignore
+            }
+        }
+
+        // 3. Logik Mula Sentuh (3 Saat & Reset Auto Jika Terlepas)
         function startScanning(e) {
             if (elapsed >= totalDuration) return;
             if (isHolding) return;
@@ -211,6 +247,11 @@
             warningMsg.classList.add('hidden');
             palmIcon.classList.add('text-red-500', 'scale-105');
             scannerArea.classList.add('border-red-500', 'bg-neutral-900/90', 'shadow-[0_0_60px_rgba(239,68,68,0.4)]');
+
+            // Mainkan bunyi bip imbasan setiap kali interval berjalan
+            scanAudioInterval = setInterval(() => {
+                playScanBeep();
+            }, 300);
 
             holdTimer = setInterval(() => {
                 elapsed += intervalTime;
@@ -221,6 +262,7 @@
 
                 if (elapsed >= totalDuration) {
                     clearInterval(holdTimer);
+                    clearInterval(scanAudioInterval);
                     triggerSuccess();
                 }
             }, intervalTime);
@@ -228,10 +270,11 @@
 
         // 4. Fungsi Jika Jari/Tangan Terangkat (Reset ke 0)
         function stopScanning(e) {
-            if (elapsed >= totalDuration) return; // Kalau dah selesai, jangan usik
+            if (elapsed >= totalDuration) return; 
 
             if (isHolding) {
                 clearInterval(holdTimer);
+                clearInterval(scanAudioInterval);
                 isHolding = false;
                 elapsed = 0; // Reset masa jadi 0 balik
                 
@@ -239,7 +282,6 @@
                 palmIcon.classList.remove('text-red-500', 'scale-105');
                 scannerArea.classList.remove('border-red-500', 'bg-neutral-900/90', 'shadow-[0_0_60px_rgba(239,68,68,0.4)]');
                 
-                // Papar amaran pantas
                 warningMsg.classList.remove('hidden');
                 setTimeout(() => {
                     warningMsg.classList.add('hidden');
@@ -263,16 +305,18 @@
             stopScanning(e);
         }, { passive: false });
 
-        // 5. Kejayaan Selepas 4 Saat
+        // 5. Kejayaan Selepas 3 Saat
         function triggerSuccess() {
             successScreen.classList.remove('hidden');
             playSuccessSound();
         }
 
-        // Kesan Bunyi Audio VVIP
+        // Kesan Bunyi Audio VVIP Kejayaan
         function playSuccessSound() {
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
